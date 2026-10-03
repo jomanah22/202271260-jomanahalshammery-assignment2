@@ -1,6 +1,6 @@
 /* ==========================================================================
-   Jomanah Alshammary - Portfolio Scripts (Assignment 1)
-   1. Dark / light theme toggle (saved in localStorage)
+   Jomanah Alshammary — portfolio scripts (Assignment 2)
+   1. Theme toggle (saved in localStorage)
    2. Mobile navigation
    3. Typing effect for the hero title
    4. Contact form feedback (no backend)
@@ -15,9 +15,6 @@
 
   /* ------------------------------------------------------------------
      1. Theme toggle
-     The active theme lives on <html data-theme="...">. A small inline
-     script in <head> applies the saved value before first paint; this
-     part only handles the button and saving the choice.
      ------------------------------------------------------------------ */
   var themeToggle = document.getElementById('theme-toggle');
 
@@ -26,25 +23,26 @@
     if (explicit) {
       return explicit;
     }
-    // No saved choice yet: follow the operating system preference
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   }
 
-  function updateThemeLabel() {
+  function applyTheme(theme) {
+    root.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
     themeToggle.setAttribute(
       'aria-label',
-      currentTheme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'
+      theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'
     );
   }
 
   themeToggle.addEventListener('click', function () {
-    var next = currentTheme() === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    localStorage.setItem('theme', next);
-    updateThemeLabel();
+    applyTheme(currentTheme() === 'dark' ? 'light' : 'dark');
   });
 
-  updateThemeLabel();
+  themeToggle.setAttribute(
+    'aria-label',
+    currentTheme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'
+  );
 
   /* ------------------------------------------------------------------
      2. Mobile navigation
@@ -62,7 +60,6 @@
     setMenu(!nav.classList.contains('is-open'));
   });
 
-  // Close the menu after a link is chosen so the section is visible
   nav.addEventListener('click', function (event) {
     if (event.target.tagName === 'A') {
       setMenu(false);
