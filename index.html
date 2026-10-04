@@ -81,73 +81,16 @@
           <p>Projects from my Integrated Design studies at KFUPM: game design and character animation from ITD 212, the UniDine research poster, then branding and 3D work from my ITD 211 design journal.</p>
         </div>
 
-        <div class="project-grid">
-          <article class="card project-card">
-            <button type="button" class="project-media" aria-label="View Hidden Gate Game full size">
-              <img src="assets/images/hidden-gate-1.jpg" alt="" width="1200" height="900" loading="lazy">
-            </button>
-            <div class="project-body">
-              <span class="badge badge-accent">Project &middot; ITD212 Project 2</span>
-              <h3>Hidden Gate Game</h3>
-              <p class="project-summary">An exploration adventure where Rocky collects five fragments to unlock a hidden gate, built with Blender and Unity.</p>
-              <ul class="tags"><li>Unity</li><li>Blender</li><li>Game design</li></ul>
-            </div>
-          </article>
-          <article class="card project-card">
-            <button type="button" class="project-media" aria-label="View UniDine: Smart Meal Planning App full size">
-              <img src="assets/images/unidine-1.jpg" alt="" width="1200" height="900" loading="lazy">
-            </button>
-            <div class="project-body">
-              <span class="badge badge-accent">Project &middot; Research project poster</span>
-              <h3>UniDine: Smart Meal Planning App</h3>
-              <p class="project-summary">A smart meal planning app concept: improve meal quantity estimates and let students reserve meals and earn reward points.</p>
-              <ul class="tags"><li>UX research</li><li>App concept</li><li>Service design</li></ul>
-            </div>
-          </article>
-          <article class="card project-card">
-            <button type="button" class="project-media" aria-label="View The Hero Journey full size">
-              <img src="assets/images/hero-journey-1.jpg" alt="" width="1200" height="900" loading="lazy">
-            </button>
-            <div class="project-body">
-              <span class="badge badge-accent">Project &middot; ITD212 Project 1</span>
-              <h3>The Hero Journey</h3>
-              <p class="project-summary">A character animation exploring identity and self-awareness: a hero chasing his shadow as it fades away.</p>
-              <ul class="tags"><li>Blender</li><li>Character animation</li><li>Sculpting</li></ul>
-            </div>
-          </article>
-          <article class="card project-card">
-            <button type="button" class="project-media" aria-label="View Taif Rose Perfume Branding full size">
-              <img src="assets/images/taif-rose-perfume-branding-1.jpg" alt="" width="1200" height="900" loading="lazy">
-            </button>
-            <div class="project-body">
-              <span class="badge badge-accent">Project &middot; Project 3.1</span>
-              <h3>Taif Rose Perfume Branding</h3>
-              <p class="project-summary">A perfume brand inspired by the Taif Rose, turning its cultural value into a modern visual identity in Photoshop and InDesign.</p>
-              <ul class="tags"><li>Photoshop</li><li>InDesign</li><li>Branding</li></ul>
-            </div>
-          </article>
-          <article class="card project-card">
-            <button type="button" class="project-media" aria-label="View 3D Hotel – Letter H Concept full size">
-              <img src="assets/images/3d-hotel-letter-h-1.jpg" alt="" width="1200" height="900" loading="lazy">
-            </button>
-            <div class="project-body">
-              <span class="badge badge-accent">Project &middot; Project 3.2</span>
-              <h3>3D Hotel – Letter H Concept</h3>
-              <p class="project-summary">A 3D hotel inspired by the shape of the letter H, modeled in Blender with interiors, lighting and materials.</p>
-              <ul class="tags"><li>Blender</li><li>3D Modeling</li><li>Lighting</li></ul>
-            </div>
-          </article>
-          <article class="card project-card">
-            <button type="button" class="project-media" aria-label="View Tarout Palm Island full size">
-              <img src="assets/images/tarout-palm-island-1.jpg" alt="" width="1200" height="900" loading="lazy">
-            </button>
-            <div class="project-body">
-              <span class="badge badge-accent">Project &middot; Project 3.3</span>
-              <h3>Tarout Palm Island</h3>
-              <p class="project-summary">A stylized 3D island inspired by Tarout Island: a palm-tree maze in Blender leading visitors to Tarout Castle.</p>
-              <ul class="tags"><li>Blender</li><li>3D Modeling</li><li>World building</li></ul>
-            </div>
-          </article>
+        <div class="project-status">
+          <span id="project-count" role="status" aria-live="polite"></span>
+          <button type="button" class="text-button" id="project-clear" hidden>Clear filters</button>
+        </div>
+
+        <div id="project-list" class="project-grid project-list" aria-live="polite"></div>
+
+        <div class="empty-state" id="project-empty" hidden>
+          <p><strong>No projects match that.</strong> Try a different word, or pick another filter.</p>
+          <button type="button" class="btn btn-outline" id="project-empty-reset">Show all projects</button>
         </div>
       </div>
     </section>

@@ -12,6 +12,7 @@
    10. Contact
    11. Footer
    12. Responsive
+   13. Project controls, notes popup, form feedback, reveal
    ========================================================================== */
 
 /* Montserrat is served from this repository (assets/fonts) so the page makes
@@ -940,6 +941,85 @@ h3 {
   }
 }
 
+/* Small label used in the case-study dialog and cards */
+
+/* --------------------------------------------------------------------------
+   13. Project controls, notes popup and form feedback
+   -------------------------------------------------------------------------- */
+
+.project-status {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  min-height: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.text-button {
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--accent);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.text-button:hover {
+  color: var(--accent-hover);
+}
+
+.project-card .tags {
+  margin-bottom: 1rem;
+}
+
+.details-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: auto;
+  align-self: flex-start;
+  padding: 0;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--accent);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.details-toggle:hover {
+  color: var(--accent-hover);
+}
+
+.details-toggle svg {
+  transition: transform 0.25s var(--ease);
+}
+
+.empty-state {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  margin-top: 1rem;
+  animation: rise 0.35s var(--ease) both;
+}
+
+.empty-state p {
+  margin-bottom: 1.25rem;
+}
+
+.empty-state strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
 /* Respect users who prefer less motion */
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -955,7 +1035,7 @@ h3 {
 }
 
 /* ==========================================================================
-   13. Project image viewer (lightbox)
+   Project image viewer (lightbox)
    A project cover is a <button>, so it can be opened with the keyboard, and
    the picture is shown in a native <dialog>. showModal() gives the backdrop,
    the focus trap and Escape-to-close without extra script.

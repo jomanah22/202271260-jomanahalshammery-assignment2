@@ -2,10 +2,11 @@
    Jomanah Alshammary — portfolio scripts (Assignment 2)
    1. Theme toggle (saved in localStorage)
    2. Mobile navigation
-   3. Typing effect for the hero title
-   4. Contact form feedback (no backend)
-   5. Footer year
-   6. Project image viewer (lightbox)
+   3. Projects: render from data, filter chips, live search, notes popup
+   4. Contact form: validation, saved draft, animated confirmation
+   5. Scroll reveal
+   6. Footer year
+   7. Project image viewer (lightbox)
    ========================================================================== */
 
 (function () {
@@ -74,32 +75,86 @@
   });
 
   /* ------------------------------------------------------------------
-     3. Typing effect
-     Types the hero title one character at a time, then keeps a
-     blinking cursor. The full text stays in the markup so the page
-     reads correctly without JavaScript and for screen readers.
+     3. Projects
+     The list is built from PROJECTS (js/data.js). The visitor can narrow
+     it with a filter chip or by typing; both are combined. Each item has
+     a "Process & notes" button that opens a popup with the full write-up.
      ------------------------------------------------------------------ */
-  var heroTitle = document.getElementById('hero-title');
-  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var projectList = document.getElementById('project-list');
+  var emptyState = document.getElementById('project-empty');
+  var resultCount = document.getElementById('project-count');
+  var clearButton = document.getElementById('project-clear');
 
-  if (heroTitle && !reduceMotion) {
-    var fullText = heroTitle.textContent.trim();
-    var index = 0;
+  var activeFilter = 'All';
+  var query = '';
 
-    heroTitle.setAttribute('aria-label', fullText);
-    heroTitle.textContent = '';
-    heroTitle.classList.add('is-typing');
-
-    function typeNext() {
-      heroTitle.textContent = fullText.slice(0, index + 1);
-      index += 1;
-      if (index < fullText.length) {
-        setTimeout(typeNext, 80);
-      }
-    }
-
-    setTimeout(typeNext, 400);
+  function escapeHtml(text) {
+    return String(text)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
   }
+
+  function projectTemplate(project) {
+    var tags = project.tags.map(function (tag) {
+      return '<li>' + escapeHtml(tag) + '</li>';
+    }).join('');
+
+    return (
+      '<article class="card project-card" data-id="' + project.id + '">' +
+        '<button type="button" class="project-media" aria-label="View ' + escapeHtml(project.title) + ' full size">' +
+          '<img src="' + project.image + '" alt="" width="1200" height="750" loading="lazy">' +
+        '</button>' +
+        '<div class="project-body">' +
+          '<span class="badge' + (project.kind === 'Project' ? ' badge-accent' : '') + '">' + escapeHtml(project.kind) + '</span>' +
+          '<h3>' + escapeHtml(project.title) + '</h3>' +
+          '<p class="project-summary">' + escapeHtml(project.summary) + '</p>' +
+          '<ul class="tags">' + tags + '</ul>' +
+          '<button type="button" class="details-toggle" data-notes="' + project.id + '">' +
+            '<span>Process &amp; notes</span>' +
+            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>' +
+          '</button>' +
+        '</div>' +
+      '</article>'
+    );
+  }
+
+  function matches(project) {
+    var passesFilter = activeFilter === 'All' || project.tags.indexOf(activeFilter) !== -1;
+    if (!passesFilter) {
+      return false;
+    }
+    if (!query) {
+      return true;
+    }
+    var haystack = [project.title, project.summary, project.kind]
+      .concat(project.tags)
+      .join(' ')
+      .toLowerCase();
+    return haystack.indexOf(query) !== -1;
+  }
+
+  function renderProjects() {
+    var visible = PROJECTS.filter(matches);
+
+    projectList.innerHTML = visible.map(projectTemplate).join('');
+
+    // Feedback: how many are showing, and an empty state when none match
+    var hasQueryOrFilter = query || activeFilter !== 'All';
+    emptyState.hidden = visible.length !== 0;
+    resultCount.textContent = hasQueryOrFilter
+      ? 'Showing ' + visible.length + ' of ' + PROJECTS.length
+      : PROJECTS.length + ' pieces of work';
+    clearButton.hidden = !hasQueryOrFilter;
+
+    // Stagger the entrance so the change is easy to follow
+    Array.prototype.forEach.call(projectList.children, function (item, index) {
+      item.style.animationDelay = (index * 60) + 'ms';
+    });
+  }
+
+  renderProjects();
 
   /* ------------------------------------------------------------------
      4. Contact form
@@ -139,6 +194,22 @@
   /* ------------------------------------------------------------------
      5. Footer year
      ------------------------------------------------------------------ */
+  var heroTitle = document.getElementById('hero-title');
+  if (heroTitle && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    var fullText = heroTitle.textContent.trim();
+    var typed = 0;
+    heroTitle.setAttribute('aria-label', fullText);
+    heroTitle.textContent = '';
+    heroTitle.classList.add('is-typing');
+    setTimeout(function typeNext() {
+      typed += 1;
+      heroTitle.textContent = fullText.slice(0, typed);
+      if (typed < fullText.length) {
+        setTimeout(typeNext, 80);
+      }
+    }, 400);
+  }
+
   document.getElementById('year').textContent = new Date().getFullYear();
 
   /* ------------------------------------------------------------------
@@ -201,7 +272,7 @@
     }
   }
 
-  document.querySelector('.project-grid').addEventListener('click', function (event) {
+  projectList.addEventListener('click', function (event) {
     var button = event.target.closest('.project-media');
     if (button) {
       openLightbox(button);
@@ -237,6 +308,7 @@
 
   lightbox.addEventListener('close', function () {
     document.body.classList.remove('has-lightbox');
+    // The card may have been re-rendered by a filter while the viewer was open
     if (openedFrom && document.body.contains(openedFrom)) {
       openedFrom.focus();
     }
