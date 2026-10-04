@@ -81,12 +81,24 @@
      a "Process & notes" button that opens a popup with the full write-up.
      ------------------------------------------------------------------ */
   var projectList = document.getElementById('project-list');
+  var filterBar = document.getElementById('project-filters');
   var emptyState = document.getElementById('project-empty');
   var resultCount = document.getElementById('project-count');
   var clearButton = document.getElementById('project-clear');
 
   var activeFilter = 'All';
   var query = '';
+
+  // Build the filter chips from data so the list and chips stay in sync
+  ['All'].concat(PROJECT_FILTERS).forEach(function (name) {
+    var chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'chip' + (name === 'All' ? ' is-active' : '');
+    chip.textContent = name;
+    chip.dataset.filter = name;
+    chip.setAttribute('aria-pressed', String(name === 'All'));
+    filterBar.appendChild(chip);
+  });
 
   function escapeHtml(text) {
     return String(text)
@@ -153,6 +165,20 @@
       item.style.animationDelay = (index * 60) + 'ms';
     });
   }
+
+  filterBar.addEventListener('click', function (event) {
+    var chip = event.target.closest('.chip');
+    if (!chip) {
+      return;
+    }
+    activeFilter = chip.dataset.filter;
+    Array.prototype.forEach.call(filterBar.children, function (c) {
+      var active = c === chip;
+      c.classList.toggle('is-active', active);
+      c.setAttribute('aria-pressed', String(active));
+    });
+    renderProjects();
+  });
 
   renderProjects();
 

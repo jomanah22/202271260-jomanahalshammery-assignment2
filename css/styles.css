@@ -947,6 +947,45 @@ h3 {
    13. Project controls, notes popup and form feedback
    -------------------------------------------------------------------------- */
 
+.project-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+}
+
+.chip {
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.35rem 0;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+
+.chip:hover {
+  color: var(--text);
+}
+
+.chip.is-active {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+
 .project-status {
   display: flex;
   align-items: center;
