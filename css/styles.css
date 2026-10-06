@@ -946,6 +946,17 @@ h3 {
 /* --------------------------------------------------------------------------
    13. Project controls, notes popup and form feedback
    -------------------------------------------------------------------------- */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
 
 .project-toolbar {
   display: flex;
@@ -984,6 +995,43 @@ h3 {
 .chip.is-active {
   color: var(--text);
   border-bottom-color: var(--accent);
+}
+
+.project-search {
+  position: relative;
+  flex: 0 1 260px;
+  min-width: 200px;
+}
+
+.project-search svg {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.project-search input {
+  width: 100%;
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--text);
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 0;
+  border-width: 0 0 1px;
+  padding: 0.5rem 0 0.5rem 1.6rem;
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+
+.project-search input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.project-search input::-webkit-search-cancel-button {
+  cursor: pointer;
 }
 
 .project-status {
@@ -1057,6 +1105,16 @@ h3 {
 .empty-state strong {
   color: var(--text);
   font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .project-toolbar {
+    gap: 0.9rem;
+  }
+
+  .project-search {
+    flex-basis: 100%;
+  }
 }
 
 /* Respect users who prefer less motion */

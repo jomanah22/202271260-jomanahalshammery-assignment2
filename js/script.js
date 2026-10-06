@@ -82,6 +82,7 @@
      ------------------------------------------------------------------ */
   var projectList = document.getElementById('project-list');
   var filterBar = document.getElementById('project-filters');
+  var searchInput = document.getElementById('project-search');
   var emptyState = document.getElementById('project-empty');
   var resultCount = document.getElementById('project-count');
   var clearButton = document.getElementById('project-clear');
@@ -177,6 +178,11 @@
       c.classList.toggle('is-active', active);
       c.setAttribute('aria-pressed', String(active));
     });
+    renderProjects();
+  });
+
+  searchInput.addEventListener('input', function () {
+    query = searchInput.value.trim().toLowerCase();
     renderProjects();
   });
 
