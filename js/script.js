@@ -186,6 +186,21 @@
     renderProjects();
   });
 
+  function resetProjectControls() {
+    activeFilter = 'All';
+    query = '';
+    searchInput.value = '';
+    Array.prototype.forEach.call(filterBar.children, function (c) {
+      var active = c.dataset.filter === 'All';
+      c.classList.toggle('is-active', active);
+      c.setAttribute('aria-pressed', String(active));
+    });
+    renderProjects();
+  }
+
+  clearButton.addEventListener('click', resetProjectControls);
+  document.getElementById('project-empty-reset').addEventListener('click', resetProjectControls);
+
   renderProjects();
 
   /* ------------------------------------------------------------------

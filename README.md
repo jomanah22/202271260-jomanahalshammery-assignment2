@@ -4,7 +4,7 @@ This is my personal portfolio website, built for SWE 363 (Web Engineering) at KF
 It is a single page written in plain HTML, CSS and JavaScript. No frameworks or libraries
 are used.
 
-Live site: https://202271260-jomanahalshammery-assignment-2.vercel.app
+Live site: hhttps://202271260-jomanahalshammery-assignment-2.vercel.app
 
 ## What the page contains
 
