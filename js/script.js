@@ -201,6 +201,52 @@
   clearButton.addEventListener('click', resetProjectControls);
   document.getElementById('project-empty-reset').addEventListener('click', resetProjectControls);
 
+  // Expand / collapse (event delegation, so it survives re-rendering)
+  /* "Process & notes" opens a popup with the full write-up for that card.
+     showModal() supplies the backdrop, focus trap and Escape; we add the
+     content, a click-outside close and focus return. */
+  var notesDialog = document.getElementById('notes-dialog');
+  var notesOpener = null;
+
+  function openNotes(project, trigger) {
+    notesOpener = trigger || null;
+    document.getElementById('notes-kind').textContent = project.kind;
+    document.getElementById('notes-title').textContent = project.title;
+    document.getElementById('notes-summary').textContent = project.summary;
+    document.getElementById('notes-process').textContent = project.process;
+    document.getElementById('notes-learning').textContent = project.learning;
+    document.getElementById('notes-tags').innerHTML = project.tags.map(function (tag) {
+      return '<li>' + escapeHtml(tag) + '</li>';
+    }).join('');
+    notesDialog.querySelector('.notes-inner').scrollTop = 0;
+    notesDialog.showModal();
+    document.body.classList.add('has-notes');
+  }
+
+  projectList.addEventListener('click', function (event) {
+    var toggle = event.target.closest('.details-toggle');
+    if (!toggle) {
+      return;
+    }
+    var project = PROJECTS.filter(function (item) { return item.id === toggle.dataset.notes; })[0];
+    if (project) {
+      openNotes(project, toggle);
+    }
+  });
+
+  document.getElementById('notes-close').addEventListener('click', function () { notesDialog.close(); });
+  notesDialog.addEventListener('click', function (event) {
+    if (event.target === notesDialog) {
+      notesDialog.close();
+    }
+  });
+  notesDialog.addEventListener('close', function () {
+    document.body.classList.remove('has-notes');
+    if (notesOpener && document.body.contains(notesOpener)) {
+      notesOpener.focus();
+    }
+  });
+
   renderProjects();
 
   /* ------------------------------------------------------------------

@@ -1117,6 +1117,85 @@ h3 {
   }
 }
 
+/* "Process & notes" popup ------------------------------------------------ */
+.notes {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  max-width: none;
+  max-height: none;
+  width: 100%;
+  height: 100%;
+  color: var(--text);
+}
+
+.notes::backdrop {
+  background-color: rgba(0, 0, 0, 0.55);
+}
+
+.notes[open] {
+  display: grid;
+  place-items: center;
+  animation: rise 0.25s var(--ease) both;
+}
+
+.notes-inner {
+  position: relative;
+  width: min(100% - 2rem, 680px);
+  max-height: calc(100vh - 2rem);
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 2.25rem 2.5rem 2.25rem;
+}
+
+.notes-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+.notes-inner h3 {
+  font-size: 1.35rem;
+  margin: 0.5rem 3rem 0.75rem 0;
+}
+
+.notes-summary {
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+}
+
+.notes-inner h4 {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 1.25rem 0 0.35rem;
+}
+
+.notes-inner p {
+  font-size: 0.95rem;
+}
+
+.notes-inner .tags {
+  margin-top: 1.5rem;
+}
+
+body.has-notes {
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .notes-inner {
+    width: min(100% - 1rem, 680px);
+    padding: 1.75rem 1.25rem 1.5rem;
+  }
+}
+
 /* Respect users who prefer less motion */
 @media (prefers-reduced-motion: reduce) {
   html {
