@@ -5,7 +5,6 @@ It is a single page written in plain HTML, CSS and JavaScript. No frameworks or 
 are used.
 
 Live site: https://202271260-jomanahalshammery-assignment-2.vercel.app
-
 ## What the page contains
 
 | Section | Content |
