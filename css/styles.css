@@ -1107,6 +1107,27 @@ h3 {
   font-weight: 500;
 }
 
+/* Form feedback */
+.field-error {
+  font-size: 0.85rem;
+  color: #b3261e;
+  min-height: 1.2em;
+}
+
+[data-theme="dark"] .field-error {
+  color: #f2a094;
+}
+
+.field.has-error input,
+.field.has-error textarea {
+  border-color: #b3261e;
+}
+
+[data-theme="dark"] .field.has-error input,
+[data-theme="dark"] .field.has-error textarea {
+  border-color: #f2a094;
+}
+
 @media (max-width: 768px) {
   .project-toolbar {
     gap: 0.9rem;

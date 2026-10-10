@@ -251,37 +251,78 @@
 
   /* ------------------------------------------------------------------
      4. Contact form
-     No backend for this assignment: check the fields are filled in and
-     the email looks valid, then show a confirmation message.
+     - validates each field and shows the problem next to it
+     - keeps a draft in localStorage so a refresh doesn't lose the text
+     - shows an animated confirmation on success
      ------------------------------------------------------------------ */
   var form = document.getElementById('contact-form');
   var status = document.getElementById('form-status');
+  var draftNote = document.getElementById('form-draft');
+  var DRAFT_KEY = 'contact-draft';
+  var fields = ['name', 'email', 'message'];
+
+  function setFieldError(name, message) {
+    var input = form.elements[name];
+    var error = document.getElementById(name + '-error');
+    input.setAttribute('aria-invalid', message ? 'true' : 'false');
+    input.closest('.field').classList.toggle('has-error', Boolean(message));
+    error.textContent = message;
+  }
+
+  function validateField(name) {
+    var value = form.elements[name].value.trim();
+
+    if (!value) {
+      var labels = { name: 'Please tell me your name.', email: 'Please add your email so I can reply.', message: 'Please write a short message.' };
+      setFieldError(name, labels[name]);
+      return false;
+    }
+    if (name === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      setFieldError(name, 'That doesn’t look like a complete email address.');
+      return false;
+    }
+    if (name === 'message' && value.length < 10) {
+      setFieldError(name, 'A little more detail helps — at least 10 characters.');
+      return false;
+    }
+    setFieldError(name, '');
+    return true;
+  }
+
+  // Validate a field as soon as the visitor leaves it
+  fields.forEach(function (name) {
+    form.elements[name].addEventListener('blur', function () {
+      if (form.elements[name].value.trim()) {
+        validateField(name);
+      }
+    });
+  });
 
   form.addEventListener('submit', function (event) {
     event.preventDefault();
 
+    var allValid = fields.map(validateField).every(Boolean);
+    status.className = 'form-status';
+
+    if (!allValid) {
+      status.textContent = 'Please fix the highlighted fields and try again.';
+      status.classList.add('is-error', 'is-shown');
+      form.querySelector('[aria-invalid="true"]').focus();
+      return;
+    }
+
     var name = form.elements.name.value.trim();
     var email = form.elements.email.value.trim();
-    var message = form.elements.message.value.trim();
 
-    status.classList.remove('is-success', 'is-error');
+    status.textContent = 'Thanks, ' + name + '. Your message has been noted — I’ll reply to ' + email + ' soon.';
+    status.classList.add('is-success', 'is-shown');
 
-    if (!name || !email || !message) {
-      status.textContent = 'Please fill in your name, email and message before sending.';
-      status.classList.add('is-error');
-      return;
-    }
-
-    // Simple shape check: something@something.something
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      status.textContent = 'Please enter a valid email address.';
-      status.classList.add('is-error');
-      return;
-    }
-
-    status.textContent = 'Thank you, ' + name + '! Your message has been received. I will get back to you at ' + email + '.';
-    status.classList.add('is-success');
     form.reset();
+    fields.forEach(function (field) {
+      setFieldError(field, '');
+    });
+    localStorage.removeItem(DRAFT_KEY);
+    draftNote.textContent = '';
   });
 
   /* ------------------------------------------------------------------
