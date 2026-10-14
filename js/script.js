@@ -298,6 +298,51 @@
     });
   });
 
+  // Draft handling
+  function saveDraft() {
+    var draft = {};
+    fields.forEach(function (name) {
+      draft[name] = form.elements[name].value;
+    });
+    var hasContent = fields.some(function (name) {
+      return draft[name].trim();
+    });
+    try {
+      if (hasContent) {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+        draftNote.textContent = 'Draft saved on this device.';
+      } else {
+        localStorage.removeItem(DRAFT_KEY);
+        draftNote.textContent = '';
+      }
+    } catch (error) {
+      draftNote.textContent = 'Couldn’t save a draft in this browser.';
+    }
+  }
+
+  function restoreDraft() {
+    try {
+      var saved = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null');
+      if (!saved) {
+        return;
+      }
+      fields.forEach(function (name) {
+        form.elements[name].value = saved[name] || '';
+      });
+      draftNote.textContent = 'Restored your unsent draft.';
+    } catch (error) {
+      localStorage.removeItem(DRAFT_KEY);
+    }
+  }
+
+  var draftTimer;
+  form.addEventListener('input', function () {
+    clearTimeout(draftTimer);
+    draftTimer = setTimeout(saveDraft, 400);
+  });
+
+  restoreDraft();
+
   form.addEventListener('submit', function (event) {
     event.preventDefault();
 
