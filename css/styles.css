@@ -804,6 +804,10 @@ h3 {
   font-size: 0.92rem;
   color: var(--text-muted);
   min-height: 1.5em;
+  /* hidden until a message is written, then fades in */
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
 }
 
 .form-status.is-success {
@@ -1138,6 +1142,11 @@ h3 {
 .form-draft {
   font-size: 0.85rem;
   color: var(--text-muted);
+}
+
+.form-status.is-shown {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 @media (max-width: 768px) {
