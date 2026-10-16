@@ -1064,6 +1064,22 @@ h3 {
   color: var(--accent-hover);
 }
 
+/* Each re-render fades the rows in, staggered by script.js */
+.project-list .project-card {
+  animation: rise 0.45s var(--ease) both;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .project-card .tags {
   margin-bottom: 1rem;
 }
