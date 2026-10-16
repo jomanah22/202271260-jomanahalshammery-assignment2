@@ -371,7 +371,48 @@
   });
 
   /* ------------------------------------------------------------------
-     5. Footer year
+     5. Scroll reveal
+     Elements with .reveal fade up the first time they enter the viewport.
+     If IntersectionObserver isn't available everything is simply shown.
+     ------------------------------------------------------------------ */
+  var revealItems = document.querySelectorAll('.reveal');
+
+  if ('IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        // Also show anything already scrolled past (e.g. after a reload
+        // that restores the scroll position), otherwise it would stay hidden
+        if (entry.isIntersecting || entry.boundingClientRect.bottom < 0) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    revealItems.forEach(function (item) {
+      observer.observe(item);
+    });
+
+    // Safety net for jumps (anchor links, restored scroll position): anything
+    // already above the fold is shown without waiting for the observer
+    window.addEventListener('scroll', function () {
+      revealItems.forEach(function (item) {
+        if (!item.classList.contains('is-visible') && item.getBoundingClientRect().top < window.innerHeight) {
+          item.classList.add('is-visible');
+        }
+      });
+    }, { passive: true });
+  } else {
+    revealItems.forEach(function (item) {
+      item.classList.add('is-visible');
+    });
+  }
+
+  /* ------------------------------------------------------------------
+     6. Footer year
+     ------------------------------------------------------------------ */
+  /* ------------------------------------------------------------------
+     Typing effect for the hero title
      ------------------------------------------------------------------ */
   var heroTitle = document.getElementById('hero-title');
   if (heroTitle && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -392,7 +433,7 @@
   document.getElementById('year').textContent = new Date().getFullYear();
 
   /* ------------------------------------------------------------------
-     6. Project image viewer
+     7. Project image viewer
      Each project cover is a button. Clicking it shows that picture full
      size in a native <dialog>: showModal() gives the backdrop, the focus
      trap and Escape to close. On top of that we add the caption, previous
