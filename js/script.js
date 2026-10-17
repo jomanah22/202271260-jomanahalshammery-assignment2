@@ -439,6 +439,8 @@
      trap and Escape to close. On top of that we add the caption, previous
      / next (buttons and the arrow keys), a click outside the picture to
      close, and returning focus to the cover that opened the viewer.
+     The covers are read from the page each time it opens, so previous /
+     next follow whatever the filter and the search are currently showing.
      ------------------------------------------------------------------ */
   var lightbox = document.getElementById('lightbox');
   var lightboxImage = document.getElementById('lightbox-image');
@@ -479,7 +481,7 @@
   }
 
   function openLightbox(button) {
-    covers = Array.prototype.slice.call(document.querySelectorAll('.project-media'));
+    covers = Array.prototype.slice.call(projectList.querySelectorAll('.project-media'));
     var index = covers.indexOf(button);
     if (index === -1) {
       return;
