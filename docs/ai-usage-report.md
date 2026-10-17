@@ -1,56 +1,60 @@
-# AI Usage Report – Assignment 1
+# AI Usage Report – Assignment 2
 
 ## Tools used and use cases
 
 **Claude (AI assistant)**
 
-I used Claude in three ways during this assignment:
+- Data structure. I described the six projects and asked how to store them so the list, the
+  filter buttons and the popup could all use one source. The suggestion was an array of plain
+  objects with a `tags` list plus a separate list of filter names. I kept that idea and put the
+  data in its own file, `js/data.js`.
+- Filtering logic. My first attempt handled the filter buttons and the search box separately
+  and they kept overwriting each other. I asked for a cleaner approach and ended up with one
+  `matches(project)` function that checks both, which is what the page uses now.
+- The `<dialog>` element. I wanted the notes in a popup rather than under the card. Claude
+  explained what `showModal()` gives for free (backdrop, focus trap, Escape) and what I still
+  had to write (filling the content, closing on a backdrop click, returning focus).
+- Accessibility review of the form: `aria-pressed` on the filter buttons, `aria-invalid` and
+  `aria-describedby` on the fields, and moving focus to the first invalid field on submit.
 
-1. Explaining things I did not know yet. Examples: how `scroll-padding-top` works with a
-   sticky header, why a `visibility` transition is needed to animate the mobile menu, and how
-   to make a `<dialog>` close when the backdrop is clicked.
-2. Reviewing my HTML for accessibility. It pointed out that the menu button needed
-   `aria-expanded`, that the form status text should be a live region so screen readers
-   announce it, and that decorative project images should have empty `alt` attributes since
-   the heading next to them already names the project. I applied all three.
-3. Drafting first versions of the README and this report from my notes, which I then rewrote
-   in my own words.
-
-I also used the browser DevTools (not an AI tool) to test every change on desktop, tablet and
-phone widths.
+**Browser DevTools** (not AI) for testing at three widths and for checking `localStorage`.
 
 ## Benefits and challenges
 
 Benefits
 
-- Faster learning. When something did not work I could ask why instead of guessing.
-- The accessibility review caught real problems I would have missed.
-- Good for naming things consistently and for spotting unused CSS.
+- Quicker iteration on logic. I could try something, describe what went wrong and get a fix
+  to test within minutes.
+- I learned features I would not have found on my own, like the native dialog element.
+- The review caught accessibility gaps that DevTools alone does not show.
 
 Challenges
 
-- Some suggestions were more complicated than what my page needed, so I simplified them or
-  left them out.
-- It is easy to accept code you do not fully understand. My rule was that nothing stays in the
-  project unless I can explain it.
-- Suggested text often sounded generic. I rewrote all of the visible wording myself.
+- Generated code mixed styles (arrow functions, template strings) that did not match the rest
+  of my file, so I rewrote it to match.
+- It liked to add extra features. I removed a suggested sort control because it was not part of
+  this assignment.
+- Suggested user messages were vague ("Something went wrong"). I rewrote every message so it
+  says what happened and what to do.
 
 ## Learning outcomes
 
-- Organising a stylesheet around CSS variables so that dark mode is just a different set of
-  values rather than duplicated rules.
-- The difference between `display: none` and `visibility: hidden` when animating a menu.
-- Using `IntersectionObserver` is not needed for everything; for this assignment plain event
-  listeners were enough.
-- How the native `<dialog>` element works and what it gives for free (focus trap, Escape,
-  backdrop).
-- A working routine: ask a small question, read the answer, test it, then decide.
+- Rendering HTML from an array of data with a template function, and why text must be escaped
+  even when it is my own.
+- Event delegation: one click listener on the list instead of one per button, so re-rendering
+  does not break anything.
+- Combining several conditions in one predicate function.
+- `IntersectionObserver` for scroll effects, including the case where the page is reloaded
+  half way down.
+- Saving structured data in `localStorage` with `JSON.stringify` and `JSON.parse`, and
+  debouncing input events so the draft is not written on every keystroke.
 
 ## Responsible use and modifications
 
-- All content on the site (bio, projects, skills, background, certificates, contact details) is
-  my own, taken from my CV and my project documentation.
-- Code suggestions were reviewed line by line and edited to fit my structure and naming.
-  Where a suggestion did more than needed it was cut down.
-- The design decisions (layout, colours, typography, section order) are mine.
-- I can explain every part of `script.js` and `styles.css` without help.
+- All project text is my own, taken from my project documentation. The AI only helped
+  organise it into a data structure.
+- Every function was reviewed, renamed to fit my conventions and commented in my own words.
+- Where suggestions were more complex than needed they were simplified; where feedback for the
+  visitor was missing (empty state, storage failure) I added it.
+- I can explain the filtering, the popup, the draft saving and the reveal effect without the
+  tool.
