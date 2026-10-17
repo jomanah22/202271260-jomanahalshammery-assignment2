@@ -1,82 +1,101 @@
-# Technical Documentation – Assignment 1
+# Technical Documentation – Assignment 2
 
 ## Overview
 
-A single-page static website. There is no build step and no dependency. Everything is in
-`index.html`, `css/styles.css`, `js/script.js`, `assets/fonts/` and `assets/images/`.
-
-## HTML structure
+A static single-page site with client-side interactivity. No build step and no dependencies.
 
 ```
-<header class="header">          logo, navigation, theme button, menu button
-<main>
-  <section id="home">            hero: greeting, name, typed tagline, bio, buttons, social links
-  <section id="projects">        six <article class="card project-card">
-  <section id="skills">          four service cards
-  <section id="experience">      feature box with education and volunteering
-  <section id="certificates">    three certificate cards
-  <section id="contact">         contact list and <form id="contact-form">
-<footer class="footer">          social links and copyright
-<dialog id="lightbox">           full-size image viewer
+index.html          markup
+css/styles.css      styles (tokens, components, sections, controls, popup, responsive)
+js/data.js          PROJECTS array and PROJECT_FILTERS list
+js/script.js        behaviour, seven numbered parts
+assets/             fonts and images
 ```
 
-Each section has an `id` that the navigation links to. Icons are inline SVG, so no icon font
-is loaded. Every project cover is a `<button class="project-media">` wrapping the image so it
-can be opened with the keyboard as well as the mouse.
+`data.js` is loaded before `script.js`, so `PROJECTS` and `PROJECT_FILTERS` exist as globals
+when the behaviour runs.
 
-## CSS
+## Data model
 
-`styles.css` is organised top to bottom:
+```js
+{
+  id: 'tarout-palm-island',        // used for ids and lookups
+  title: 'Tarout Palm Island',
+  kind: 'Project',
+  year: 2025,
+  tags: ['Blender', '3D Modeling', 'World building'],   // matched by the filter buttons
+  image: 'assets/images/tarout-palm-island-1.jpg',
+  summary: '...',                  // shown on the card
+  process: '...',                  // shown in the popup
+  learning: '...'                  // shown in the popup
+}
+```
 
-1. `@font-face` for Montserrat (variable font, served from `assets/fonts`).
-2. Variables on `:root`: colours, font, radius, shadow, header height. The dark palette is a
-   set of overrides on `[data-theme="dark"]`, repeated under
-   `@media (prefers-color-scheme: dark)` for visitors who have not chosen a theme yet.
-   `color-scheme` is set per theme so native controls follow it.
-3. Base rules, typography, `.container`, `.section`, `.section-title`.
-4. Components: `.btn` (pill buttons), `.icon-btn`, `.card`, `.badge`, `.tags`.
-5. One block per section: header, hero, portfolio, skills, background, certificates, contact,
-   footer, lightbox.
-6. Responsive rules at 992px, 768px and 480px, and a `prefers-reduced-motion` block.
+Adding a project means adding one object. `PROJECT_FILTERS` lists the tags that get a filter
+button; "All" is added by the script.
 
-Layout notes
+## Rendering, filter and search
 
-- CSS Grid is used for the project grid (`repeat(3, 1fr)`, then 2, then 1), the skill cards,
-  the feature box, the certificates and the two-column contact area.
-- Flexbox is used for the header bar, the navigation, button rows, tag lists and social icons.
-- A project card is a flex column. The caption box overlaps the bottom of the image with a
-  negative margin and stretches to the row height so cards in a row line up.
-- Images use `aspect-ratio: 4 / 3` and `object-fit: cover`, with `width` and `height`
-  attributes to avoid layout shift.
+- State is two variables: `activeFilter` (defaults to `'All'`) and `query` (lower-cased text).
+- `matches(project)` returns true when the project has the active tag (or the filter is All)
+  and the query appears in its title, summary, kind or tags.
+- `renderProjects()` filters `PROJECTS`, builds the cards with `projectTemplate()`, writes them
+  into `#project-list`, then updates the counter, the *Clear filters* link and the empty state.
+  Each card gets a small `animation-delay` so the list fades in staggered.
+- The filter buttons are created from data and use `aria-pressed` for their state.
+- All text inserted into templates goes through `escapeHtml()`.
 
-## JavaScript
+## Notes popup
 
-`script.js` is wrapped in a function so nothing is added to the global scope. It has six
-parts:
+Each card has a *Process & notes* button with `data-notes="<id>"`. One click listener on the
+list finds the project in `PROJECTS`, fills `#notes-dialog` (kind, title, summary, process,
+what I learned, tags) and calls `showModal()`. The dialog closes with Escape, the close button
+or a click on the backdrop, and focus goes back to the button that opened it. While it is
+open, `body.has-notes` stops the page from scrolling.
 
-| Part | What it does |
-| --- | --- |
-| Theme toggle | Reads the current theme from `<html data-theme>` (falling back to the system setting), switches it on click, saves it to `localStorage` and updates the button label. |
-| Mobile navigation | Toggles the `is-open` class on the nav, keeps `aria-expanded` in sync, closes on link click or Escape. |
-| Typing effect | Types the hero tagline one character every 80 ms and shows a blinking cursor with CSS. Skipped when `prefers-reduced-motion` is set. The full text stays in the HTML. |
-| Contact form | Stops the default submit, checks that all three fields are filled and that the email looks valid, then writes an error or a confirmation into a live region. |
-| Footer year | Inserts the current year. |
-| Image viewer | Opens the clicked cover in the `<dialog>` with `showModal()`, adds previous / next (buttons and arrow keys), a position counter, click outside to close and focus return to the cover. |
+## Contact form
 
-A three-line inline script in `<head>` applies the saved theme before the stylesheet paints,
-so reloading in dark mode does not flash light.
+- `validateField(name)` checks one field and writes a specific message into the matching
+  `#<name>-error` element, sets `aria-invalid` and toggles a `has-error` class on the wrapper.
+  Rules: required; the email must match `name@domain.tld`; the message needs at least 10
+  characters.
+- Fields are validated on blur once they have content, and all together on submit. On failure
+  the first invalid field receives focus.
+- Drafts: every `input` event schedules `saveDraft()` after 400 ms. The three values are stored
+  as JSON under the key `contact-draft`, restored on load, and removed after a successful
+  submit. If storage is unavailable the note under the form says so.
+- The status message is a `role="status"` live region that fades in through an `is-shown`
+  class.
 
-## Assets
+## Scroll reveal
 
-- `assets/images`: six project covers, JPEG, no wider than 1200px, about 1.1 MB in total.
-- `assets/fonts`: Montserrat as one variable `.woff2` file (latin subset, 38 KB).
+Elements with the `reveal` class start slightly lower and transparent. One
+`IntersectionObserver` adds `is-visible` the first time an element enters the viewport, or
+straight away if it is already above the viewport (for example after a reload restored the
+scroll position). A scroll listener acts as a safety net for anchor jumps. Without
+`IntersectionObserver` everything is shown at once, and `prefers-reduced-motion` turns the
+effect off.
 
-## Browser support
+## Image viewer
 
-Tested in current Chrome and Edge at 1440px, 820px and 390px in both themes. The CSS uses
-Grid, Flexbox, custom properties, `aspect-ratio` and `<dialog>`, all supported in browsers
-released since 2022.
+Clicking a project cover opens it full size in the `#lightbox` dialog with previous / next
+buttons, arrow-key navigation, a position counter and click-outside to close.
+
+## Theme, navigation and typing effect
+
+Same approach as the first version: `<html data-theme>` is set by an inline script from
+`localStorage` before paint and toggled by the header button; the mobile menu toggles an
+`is-open` class; the hero tagline is typed character by character.
+
+## Testing
+
+Checked in Chrome at 1440, 820 and 390 px in light and dark mode: no console errors, no
+horizontal overflow, all images load, all in-page links resolve. Interactions tested: each
+filter, filter combined with search, no-match state and reset, the notes popup (open, Escape,
+focus return), empty submit, invalid email, short message, draft restore after reload,
+successful submit clears the draft, the image viewer.
 
 ## Known limitations
 
-- The contact form does not send anything. A backend is not part of this assignment.
+- The form does not send anything (no backend required).
+- Filtering runs over six items in memory; a much larger list would need paging.
